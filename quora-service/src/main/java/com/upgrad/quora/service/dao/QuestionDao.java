@@ -62,13 +62,31 @@ public class QuestionDao {
     }
   }
 
-  public QuestionEntity updateQuestion(final QuestionEntity questionEntity) {
-    return entityManager.merge(questionEntity);
+  public QuestionEntity editQuestion(QuestionEntity questionEntity)
+      throws InvalidQuestionException {
+    try {
+      QuestionEntity existingQuestion =
+          entityManager
+              .createNamedQuery("questionByQUuid", QuestionEntity.class)
+              .setParameter("uuid", questionEntity.getUuid())
+              .getSingleResult();
+
+      questionEntity.setId(existingQuestion.getId());
+
+      return entityManager.merge(questionEntity);
+    } catch (NoResultException nre) {
+      throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
+    }
   }
 
-  public void deleteQuestion(final String uuid) {
-    QuestionEntity questionEntity = getQuestionByQUuid(uuid);
-    entityManager.remove(questionEntity);
+  public String deleteQuestion(final String uuid) throws InvalidQuestionException {
+    try {
+      QuestionEntity questionEntity = getQuestionByQUuid(uuid);
+      entityManager.remove(questionEntity);
+      return uuid;
+    } catch (NoResultException nre) {
+      throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
+    }
   }
 
   /**
