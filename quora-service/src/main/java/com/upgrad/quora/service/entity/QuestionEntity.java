@@ -30,7 +30,6 @@ public class QuestionEntity implements Serializable {
     private ZonedDateTime date;
 
     @ManyToOne
-    @Column(name = "user_id")
     private UserEntity userId;
 
     public long getId() {
