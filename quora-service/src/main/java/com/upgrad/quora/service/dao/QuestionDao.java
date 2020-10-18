@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
+import java.util.List;
+
 @Repository
 public class QuestionDao {
   @PersistenceContext private EntityManager entityManager;
@@ -29,26 +31,60 @@ public class QuestionDao {
     }
   }
 
-  public QuestionEntity getAllQuestions() {
-    return null;
-    //    return entityManager.createNamedQuery("getAllQuestions",
-    // QuestionEntity.class).getResultList();
+  public QuestionEntity getQuestionByQUuid(final String uuid) {
+    try {
+      return entityManager
+          .createNamedQuery("questionByQUuid", QuestionEntity.class)
+          .setParameter("uuid", uuid)
+          .getSingleResult();
+    } catch (NoResultException nre) {
+      return null;
+    }
   }
 
-  public QuestionEntity editQuestion(QuestionEntity questionEntity)
-      throws InvalidQuestionException {
+  public List<QuestionEntity> getAllQuestionsByUser(final String uuid) {
     try {
-      QuestionEntity existingQuestion =
-          entityManager
-              .createNamedQuery("questionByUuid", QuestionEntity.class)
-              .setParameter("uuid", questionEntity.getUuid())
-              .getSingleResult();
-
-      questionEntity.setId(existingQuestion.getId());
-
-      return entityManager.merge(questionEntity);
+      return entityManager
+          .createNamedQuery("allQuestionsByUserId", QuestionEntity.class)
+          .setParameter("uuid", uuid)
+          .getResultList();
     } catch (NoResultException nre) {
-      throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
+      return null;
+    }
+  }
+
+  public List<QuestionEntity> getAllQuestions() {
+    try {
+      return entityManager.createNamedQuery("allQuestions", QuestionEntity.class).getResultList();
+    } catch (NoResultException nre) {
+
+      return null;
+    }
+  }
+
+  public QuestionEntity updateQuestion(final QuestionEntity questionEntity) {
+    return entityManager.merge(questionEntity);
+  }
+
+  public void deleteQuestion(final String uuid) {
+    QuestionEntity questionEntity = getQuestionByQUuid(uuid);
+    entityManager.remove(questionEntity);
+  }
+
+  /**
+   * Method to get the QuestionEntity by uuid
+   *
+   * @param questionId
+   * @return QuestionEntity
+   */
+  public QuestionEntity getQuestionById(String questionId) {
+    try {
+      return entityManager
+          .createNamedQuery("questionById", QuestionEntity.class)
+          .setParameter("uuid", questionId)
+          .getSingleResult();
+    } catch (NoResultException nre) {
+      return null;
     }
   }
 }

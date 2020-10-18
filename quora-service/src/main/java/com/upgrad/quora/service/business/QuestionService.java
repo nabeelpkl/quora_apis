@@ -12,41 +12,47 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QuestionService {
-    @Autowired private QuestionDao questionDao;
+  @Autowired private QuestionDao questionDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(QuestionEntity questionEntity, final String authorizationToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = questionDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        }else if(userAuthTokenEntity.getLogoutAt() != null){
-            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post a question");
-        }
-
-        questionEntity.setUserId(userAuthTokenEntity.getUser());
-        return questionDao.createQuestion(questionEntity);
+  @Transactional(propagation = Propagation.REQUIRED)
+  public QuestionEntity createQuestion(
+      QuestionEntity questionEntity, final String authorizationToken)
+      throws AuthorizationFailedException {
+    UserAuthTokenEntity userAuthTokenEntity = questionDao.getUserAuthToken(authorizationToken);
+    if (userAuthTokenEntity == null) {
+      throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+    } else if (userAuthTokenEntity.getLogoutAt() != null) {
+      throw new AuthorizationFailedException(
+          "ATHR-002", "User is signed out.Sign in first to post a question");
     }
 
-    public QuestionEntity getAllQuestions(final String authorization) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = questionDao.getUserAuthToken(authorization);
-        if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        }else if(userAuthTokenEntity.getLogoutAt() != null){
-            throw new AuthorizationFailedException("ATHR-002", "'User is signed out.Sign in first to get all questions");
-        }
+    questionEntity.setUser(userAuthTokenEntity.getUser());
+    return questionDao.createQuestion(questionEntity);
+  }
 
-
-        return questionDao.getAllQuestions();
+  public QuestionEntity getAllQuestions(final String authorization)
+      throws AuthorizationFailedException {
+    UserAuthTokenEntity userAuthTokenEntity = questionDao.getUserAuthToken(authorization);
+    if (userAuthTokenEntity == null) {
+      throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+    } else if (userAuthTokenEntity.getLogoutAt() != null) {
+      throw new AuthorizationFailedException(
+          "ATHR-002", "'User is signed out.Sign in first to get all questions");
     }
 
-    public QuestionEntity editQuestion(final String authorizationToken,QuestionEntity questionEntity ) throws InvalidQuestionException, AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = questionDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        }else if(userAuthTokenEntity.getLogoutAt() != null){
-            throw new AuthorizationFailedException("ATHR-002", "'User is signed out.Sign in first to get all questions");
-        }
+    return questionDao.getAllQuestions().get(0);
+  }
 
-        return questionDao.editQuestion(questionEntity);
+  public QuestionEntity editQuestion(final String authorizationToken, QuestionEntity questionEntity)
+      throws InvalidQuestionException, AuthorizationFailedException {
+    UserAuthTokenEntity userAuthTokenEntity = questionDao.getUserAuthToken(authorizationToken);
+    if (userAuthTokenEntity == null) {
+      throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+    } else if (userAuthTokenEntity.getLogoutAt() != null) {
+      throw new AuthorizationFailedException(
+          "ATHR-002", "'User is signed out.Sign in first to get all questions");
     }
+
+    return questionDao.updateQuestion(questionEntity);
+  }
 }
