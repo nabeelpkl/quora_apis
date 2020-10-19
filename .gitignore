@@ -1,1 +1,5 @@
 .idea/
+quora-api/target/
+quora-service/target/
+quora-db/target
+.DS_Store
