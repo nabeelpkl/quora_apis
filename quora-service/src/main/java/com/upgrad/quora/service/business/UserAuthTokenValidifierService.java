@@ -8,27 +8,22 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 
-/**
- * Method to provide service for validating a user authentication token through a access token
- */
+/** Method to provide service for validating a user authentication token through a access token */
 @Service
 public class UserAuthTokenValidifierService implements EndPointIdentifier {
 
+  @Autowired UserDao userDao;
 
-    @Autowired
-    UserDao userDao;
-
-    /**
-     * @param  authorizationToken the first {@code String} to check if the access is available.
-     * @return true or false
-     */
-    boolean userSignOutStatus(String authorizationToken) {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
-        ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
-        if (loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus)) {
-            return true;
-        } else return false;
-    }
-
+  /**
+   * @param authorizationToken the first {@code String} to check if the access is available.
+   * @return true or false
+   */
+  boolean userSignOutStatus(String authorizationToken) {
+    UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+    ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
+    ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
+    if (loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus)) {
+      return true;
+    } else return false;
+  }
 }
