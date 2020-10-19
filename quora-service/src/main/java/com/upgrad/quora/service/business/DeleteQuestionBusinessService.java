@@ -1,29 +1,29 @@
 package com.upgrad.quora.service.business;
 
-import com.upgrad.quora.service.dao.AnswerDao;
+import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
-import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class DeleteAnswerBusinessService {
+public class DeleteQuestionBusinessService {
 
   @Autowired private UserDao userDao;
 
-  @Autowired private AnswerDao answerDao;
+  @Autowired private QuestionDao questionDao;
 
   /**
-   * @param answerId the first {@code String} id of the answer to be deleted
+   * @param questionId the first {@code String} id of the question to be deleted
    * @param authorization the second {@code String} to check if the access is available.
    */
   @Transactional(propagation = Propagation.REQUIRED)
-  public void deleteAnswer(final String answerId, final String authorization)
-      throws AuthorizationFailedException, AnswerNotFoundException {
+  public void userQuestionDelete(final String questionId, final String authorization)
+      throws InvalidQuestionException, AuthorizationFailedException {
     UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);
 
     // Validate if user is signed in or not
@@ -34,25 +34,26 @@ public class DeleteAnswerBusinessService {
     // Validate if user has signed out
     if (userAuthEntity.getLogoutAt() != null) {
       throw new AuthorizationFailedException(
-          "ATHR-002", "User is signed out.Sign in first to delete an answer");
+          "ATHR-002", "User is signed out.Sign in first to delete a question");
     }
 
-    // Validate if requested answer exist or not
-    if (answerDao.getAnswerByUuid(answerId) == null) {
-      throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
+    // Validate if requested question exist or not
+    if (questionDao.getQuestionByQUuid(questionId) == null) {
+      throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
     }
 
-    // Validate if current user is the owner of requested answer or the role of user is not nonadmin
+    // Validate if current user is the owner of requested question or the role of user is not
+    // nonadmin
     if (!userAuthEntity
         .getUser()
         .getUuid()
-        .equals(answerDao.getAnswerByUuid(answerId).getUser().getUuid())) {
+        .equals(questionDao.getQuestionByQUuid(questionId).getUser().getUuid())) {
       if (userAuthEntity.getUser().getRole().equals("nonadmin")) {
         throw new AuthorizationFailedException(
-            "ATHR-003", "Only the answer owner or admin can delete the answer");
+            "ATHR-003", "Oly the question owner or admin can delete the question");
       }
     }
 
-    answerDao.userAnswerDelete(answerId);
+    questionDao.deleteQuestion(questionId);
   }
 }

@@ -18,146 +18,142 @@ import java.time.ZonedDateTime;
 })*/
 public class RoleEntity implements Serializable {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @Column(name = "ID")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @Column(name = "UUID")
-    @NotNull
-    private int uuid;
+  @Column(name = "UUID")
+  @NotNull
+  private int uuid;
 
-    @Column(name = "NAME")
-    @NotNull
-    @Size(max = 50)
-    private String name;
+  @Column(name = "NAME")
+  @NotNull
+  @Size(max = 50)
+  private String name;
 
-    @Column(name = "DESCRIPTION")
-    @Size(max = 200)
-    private String description;
+  @Column(name = "DESCRIPTION")
+  @Size(max = 200)
+  private String description;
 
-    @Column(name = "ACTIVE")
-    @NotNull
-    private boolean active;
+  @Column(name = "ACTIVE")
+  @NotNull
+  private boolean active;
 
+  @Version
+  @Column(name = "VERSION", length = 19, nullable = false)
+  private Long version;
 
-    @Version
-    @Column(name = "VERSION", length = 19, nullable = false)
-    private Long version;
+  @Column(name = "CREATED_BY")
+  @NotNull
+  private String createdBy;
 
+  @Column(name = "CREATED_AT")
+  @NotNull
+  private ZonedDateTime createdAt;
 
-    @Column(name = "CREATED_BY")
-    @NotNull
-    private String createdBy;
+  @Column(name = "MODIFIED_BY")
+  private String modifiedBy;
 
+  @Column(name = "MODIFIED_AT")
+  private ZonedDateTime modifiedAt;
 
-    @Column(name = "CREATED_AT")
-    @NotNull
-    private ZonedDateTime createdAt;
+  public int getId() {
+    return id;
+  }
 
-    @Column(name = "MODIFIED_BY")
-    private String modifiedBy;
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    @Column(name = "MODIFIED_AT")
-    private ZonedDateTime modifiedAt;
+  public int getUuid() {
+    return uuid;
+  }
 
+  public void setUuid(int uuid) {
+    this.uuid = uuid;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public int getUuid() {
-        return uuid;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setUuid(int uuid) {
-        this.uuid = uuid;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public boolean isActive() {
+    return active;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public Long getVersion() {
+    return version;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setVersion(Long version) {
+    this.version = version;
+  }
 
-    public boolean isActive() {
-        return active;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public Long getVersion() {
-        return version;
-    }
+  public ZonedDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setVersion(Long version) {
-        this.version = version;
-    }
+  public void setCreatedAt(ZonedDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getModifiedBy() {
+    return modifiedBy;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setModifiedBy(String modifiedBy) {
+    this.modifiedBy = modifiedBy;
+  }
 
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public ZonedDateTime getModifiedAt() {
+    return modifiedAt;
+  }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setModifiedAt(ZonedDateTime modifiedAt) {
+    this.modifiedAt = modifiedAt;
+  }
 
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
+  /* public RoleEntity(@NotNull int uuid) {
+      this.uuid = uuid;
+  }*/
 
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
+  @Override
+  public boolean equals(Object obj) {
+    return new EqualsBuilder().append(this, obj).isEquals();
+  }
 
-    public ZonedDateTime getModifiedAt() {
-        return modifiedAt;
-    }
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder().append(this).hashCode();
+  }
 
-    public void setModifiedAt(ZonedDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
-
-   /* public RoleEntity(@NotNull int uuid) {
-        this.uuid = uuid;
-    }*/
-
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 }

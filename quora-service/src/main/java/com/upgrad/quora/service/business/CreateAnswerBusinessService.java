@@ -20,47 +20,46 @@ import java.util.UUID;
 @Service
 public class CreateAnswerBusinessService implements EndPointIdentifier {
 
-    @Autowired
-    AnswerDao answerDao;
+  @Autowired AnswerDao answerDao;
 
-    @Autowired
-    UserDao userDao;
+  @Autowired UserDao userDao;
 
-    @Autowired
-    QuestionDao questionDao;
+  @Autowired QuestionDao questionDao;
 
-    /**
-     * @param  answerEntity the first {@code AnswerEntity} object to store answer
-     * @param  questionId the second {@code String} to associate the answer to that question.
-     * @param  authorization the third {@code String} to check if the access is available.
-     * @return AnswerEntity object is returned after persisting in the database.
-     */
-    @Transactional(propagation = Propagation.REQUIRED)
-    public AnswerEntity createAnswer(final AnswerEntity answerEntity, final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
-        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);
+  /**
+   * @param answerEntity the first {@code AnswerEntity} object to store answer
+   * @param questionId the second {@code String} to associate the answer to that question.
+   * @param authorization the third {@code String} to check if the access is available.
+   * @return AnswerEntity object is returned after persisting in the database.
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public AnswerEntity createAnswer(
+      final AnswerEntity answerEntity, final String questionId, final String authorization)
+      throws AuthorizationFailedException, InvalidQuestionException {
+    UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);
 
-        // Validate if user is signed in or not
-        if (userAuthEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        }
-
-        // Validate if user has signed out
-        if (userAuthEntity.getLogoutAt() != null) {
-            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post an answer");
-        }
-
-        // Validate if requested question exist
-        QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
-        if (questionEntity == null) {
-            throw new InvalidQuestionException("QUES-001", "The question entered is invalid");
-        }
-
-        answerEntity.setUuid(UUID.randomUUID().toString());
-        answerEntity.setDate(ZonedDateTime.now());
-        answerEntity.setUser(userAuthEntity.getUser());
-        answerEntity.setQuestion(questionEntity);
-
-        return answerDao.createAnswer(answerEntity);
+    // Validate if user is signed in or not
+    if (userAuthEntity == null) {
+      throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
     }
 
+    // Validate if user has signed out
+    if (userAuthEntity.getLogoutAt() != null) {
+      throw new AuthorizationFailedException(
+          "ATHR-002", "User is signed out.Sign in first to post an answer");
+    }
+
+    // Validate if requested question exist
+    QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
+    if (questionEntity == null) {
+      throw new InvalidQuestionException("QUES-001", "The question entered is invalid");
+    }
+
+    answerEntity.setUuid(UUID.randomUUID().toString());
+    answerEntity.setDate(ZonedDateTime.now());
+    answerEntity.setUser(userAuthEntity.getUser());
+    answerEntity.setQuestion(questionEntity);
+
+    return answerDao.createAnswer(answerEntity);
+  }
 }
